@@ -17,11 +17,15 @@ const common_1 = require("@nestjs/common");
 const common_2 = require("@nestjs/common");
 const auth_service_1 = require("./auth.service");
 const bcrypt = require("bcrypt");
+const register_dto_1 = require("./dto/register.dto");
 let AuthController = class AuthController {
     constructor(authService) {
         this.authService = authService;
     }
     async register(body) {
+        if (body.password !== body.password_confirm) {
+            throw new common_1.BadRequestException('Password do not match');
+        }
         const hashed = await bcrypt.hash(body.password, 12);
         return this.authService.create({
             first_name: body.first_name,
@@ -35,7 +39,7 @@ __decorate([
     (0, common_1.Post)('register'),
     __param(0, (0, common_1.Body)()),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Object]),
+    __metadata("design:paramtypes", [register_dto_1.RegisterDto]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "register", null);
 AuthController = __decorate([
