@@ -26,13 +26,8 @@ let AuthController = class AuthController {
         if (body.password !== body.password_confirm) {
             throw new common_1.BadRequestException('Password do not match');
         }
-        const hashed = await bcrypt.hash(body.password, 12);
-        return this.authService.create({
-            first_name: body.first_name,
-            last_name: body.last_name,
-            email: body.email,
-            password: hashed,
-        });
+        body.password = await bcrypt.hash(body.password, 12);
+        return this.authService.create(body);
     }
 };
 __decorate([
