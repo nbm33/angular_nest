@@ -24,6 +24,9 @@ let AuthService = class AuthService {
     async create(user) {
         return await this.userRepository.save(user);
     }
+    async findOneBy(condition) {
+        return await this.userRepository.findOne(condition);
+    }
 };
 AuthService = __decorate([
     (0, common_1.Injectable)(),

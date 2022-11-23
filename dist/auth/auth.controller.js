@@ -29,6 +29,18 @@ let AuthController = class AuthController {
         body.password = await bcrypt.hash(body.password, 12);
         return this.authService.create(body);
     }
+    async login(email, password) {
+        const user = await this.authService.findOneBy({ email: email });
+        if (!user) {
+            throw new common_1.BadRequestException("Email does not exist");
+        }
+        if (!await bcrypt.compare(password, user.password)) {
+            throw new common_1.BadRequestException("Password does not match");
+        }
+        return {
+            user
+        };
+    }
 };
 __decorate([
     (0, common_1.Post)('register'),
@@ -37,6 +49,14 @@ __decorate([
     __metadata("design:paramtypes", [register_dto_1.RegisterDto]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "register", null);
+__decorate([
+    (0, common_1.Post)('login'),
+    __param(0, (0, common_1.Body)('email')),
+    __param(1, (0, common_1.Body)('password')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "login", null);
 AuthController = __decorate([
     (0, common_2.Controller)(),
     __metadata("design:paramtypes", [auth_service_1.AuthService])

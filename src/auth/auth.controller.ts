@@ -21,4 +21,25 @@ export class AuthController {
         return this.authService.create(body);
     }
 
+    @Post('login')
+    async login(
+        @Body('email') email: string,
+        @Body('password') password: string
+    ) {
+        
+        const user = await this.authService.findOneBy({email: email});
+
+        if(!user){
+            throw new BadRequestException("Email does not exist");
+        }
+
+        if(!await bcrypt.compare(password, user.password)){
+            throw new BadRequestException("Password does not match");
+        }
+
+        return {
+            user
+        }
+    }
+
 }

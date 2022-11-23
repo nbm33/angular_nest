@@ -5,4 +5,5 @@ export declare class AuthService {
     private readonly userRepository;
     constructor(userRepository: Repository<UserEntity>);
     create(user: User): Promise<User>;
+    findOneBy(condition: any): Promise<User>;
 }
