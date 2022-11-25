@@ -1,10 +1,15 @@
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
+import { JwtService } from '@nestjs/jwt';
+import { Request, Response } from 'express';
+import { LoginDto } from './dto/login.dto';
 export declare class AuthController {
     private authService;
-    constructor(authService: AuthService);
+    private jwtService;
+    constructor(authService: AuthService, jwtService: JwtService);
     register(body: RegisterDto): Promise<import("./models/user.interface").User>;
-    login(email: string, password: string): Promise<{
+    login(body: LoginDto, response: Response): Promise<{
         user: import("./models/user.interface").User;
     }>;
+    user(request: Request): Promise<import("./models/user.interface").User>;
 }

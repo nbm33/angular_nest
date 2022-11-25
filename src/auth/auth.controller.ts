@@ -1,13 +1,21 @@
-import { BadRequestException, Body, Post } from '@nestjs/common';
+import { BadRequestException, Body, ClassSerializerInterceptor, Post, Req, UseInterceptors } from '@nestjs/common';
 import { Controller, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import * as bcrypt from 'bcrypt';
 import { RegisterDto } from './dto/register.dto';
+import { JwtService } from '@nestjs/jwt';
+import { Request, Response } from 'express';
+import { Res } from '@nestjs/common';
+import { LoginDto } from './dto/login.dto';
+import { AuthInterceptor } from './auth.interceptor';
 
 @Controller()
 export class AuthController { 
 
-    constructor(private authService: AuthService){
+    constructor(
+        private authService: AuthService,
+        private jwtService: JwtService
+        ){
     }
 
     @Post('register')
@@ -21,25 +29,46 @@ export class AuthController {
         return this.authService.create(body);
     }
 
+    //@Body('email') email: string,
+    //@Body('password') password: string,
+
     @Post('login')
     async login(
-        @Body('email') email: string,
-        @Body('password') password: string
+        @Body() body: LoginDto,
+        @Res({passthrough: true}) response: Response
     ) {
         
-        const user = await this.authService.findOneBy({email: email});
+        const user = await this.authService.findOneBy(body.email);
 
         if(!user){
             throw new BadRequestException("Email does not exist");
         }
 
-        if(!await bcrypt.compare(password, user.password)){
+        if(!await bcrypt.compare(body.password, user.password)){
             throw new BadRequestException("Password does not match");
         }
+
+        const jwt =  await this.jwtService.signAsync({id: user.id});
+
+        response.cookie('jwt', jwt, {httpOnly: true});
 
         return {
             user
         }
     }
+
+    @UseInterceptors(ClassSerializerInterceptor, AuthInterceptor)
+    @Get('user')
+    async user(@Req() request: Request){
+        const cookie = request.cookies['jwt']; 
+
+        const data = await this.jwtService.verifyAsync(cookie);
+
+        return this.authService.findOneBy({id: data['id']});
+
+    }
+
+
+
 
 }

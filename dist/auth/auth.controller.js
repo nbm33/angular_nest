@@ -18,9 +18,14 @@ const common_2 = require("@nestjs/common");
 const auth_service_1 = require("./auth.service");
 const bcrypt = require("bcrypt");
 const register_dto_1 = require("./dto/register.dto");
+const jwt_1 = require("@nestjs/jwt");
+const common_3 = require("@nestjs/common");
+const login_dto_1 = require("./dto/login.dto");
+const auth_interceptor_1 = require("./auth.interceptor");
 let AuthController = class AuthController {
-    constructor(authService) {
+    constructor(authService, jwtService) {
         this.authService = authService;
+        this.jwtService = jwtService;
     }
     async register(body) {
         if (body.password !== body.password_confirm) {
@@ -29,17 +34,24 @@ let AuthController = class AuthController {
         body.password = await bcrypt.hash(body.password, 12);
         return this.authService.create(body);
     }
-    async login(email, password) {
-        const user = await this.authService.findOneBy({ email: email });
+    async login(body, response) {
+        const user = await this.authService.findOneBy(body.email);
         if (!user) {
             throw new common_1.BadRequestException("Email does not exist");
         }
-        if (!await bcrypt.compare(password, user.password)) {
+        if (!await bcrypt.compare(body.password, user.password)) {
             throw new common_1.BadRequestException("Password does not match");
         }
+        const jwt = await this.jwtService.signAsync({ id: user.id });
+        response.cookie('jwt', jwt, { httpOnly: true });
         return {
             user
         };
+    }
+    async user(request) {
+        const cookie = request.cookies['jwt'];
+        const data = await this.jwtService.verifyAsync(cookie);
+        return this.authService.findOneBy({ id: data['id'] });
     }
 };
 __decorate([
@@ -51,15 +63,24 @@ __decorate([
 ], AuthController.prototype, "register", null);
 __decorate([
     (0, common_1.Post)('login'),
-    __param(0, (0, common_1.Body)('email')),
-    __param(1, (0, common_1.Body)('password')),
+    __param(0, (0, common_1.Body)()),
+    __param(1, (0, common_3.Res)({ passthrough: true })),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String, String]),
+    __metadata("design:paramtypes", [login_dto_1.LoginDto, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "login", null);
+__decorate([
+    (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor, auth_interceptor_1.AuthInterceptor),
+    (0, common_2.Get)('user'),
+    __param(0, (0, common_1.Req)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "user", null);
 AuthController = __decorate([
     (0, common_2.Controller)(),
-    __metadata("design:paramtypes", [auth_service_1.AuthService])
+    __metadata("design:paramtypes", [auth_service_1.AuthService,
+        jwt_1.JwtService])
 ], AuthController);
 exports.AuthController = AuthController;
 //# sourceMappingURL=auth.controller.js.map
