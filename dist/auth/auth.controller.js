@@ -36,22 +36,31 @@ let AuthController = class AuthController {
     }
     async login(body, response) {
         const user = await this.authService.findOneBy(body.email);
-        if (!user) {
-            throw new common_1.BadRequestException("Email does not exist");
+        try {
+            if (!user) {
+                throw new common_1.BadRequestException("Email does not exist");
+            }
+            if (!await bcrypt.compare(body.password, user.password)) {
+                throw new common_1.BadRequestException("Password does not match");
+            }
+            const jwt = await this.jwtService.signAsync({ id: user.id });
+            response.cookie('jwt', jwt, { httpOnly: true });
         }
-        if (!await bcrypt.compare(body.password, user.password)) {
-            throw new common_1.BadRequestException("Password does not match");
+        catch (error) {
+            throw error;
         }
-        const jwt = await this.jwtService.signAsync({ id: user.id });
-        response.cookie('jwt', jwt, { httpOnly: true });
-        return {
-            user
-        };
+        return user;
     }
     async user(request) {
         const cookie = request.cookies['jwt'];
         const data = await this.jwtService.verifyAsync(cookie);
         return this.authService.findOneBy({ id: data['id'] });
+    }
+    async logout(response) {
+        response.clearCookie('jwt');
+        return {
+            message: 'logout successfully'
+        };
     }
 };
 __decorate([
@@ -70,14 +79,23 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "login", null);
 __decorate([
-    (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor, auth_interceptor_1.AuthInterceptor),
+    (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
     (0, common_2.Get)('user'),
     __param(0, (0, common_1.Req)()),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "user", null);
+__decorate([
+    (0, common_1.UseInterceptors)(auth_interceptor_1.AuthInterceptor),
+    (0, common_1.Post)('logout'),
+    __param(0, (0, common_3.Res)({ passthrough: true })),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "logout", null);
 AuthController = __decorate([
+    (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
     (0, common_2.Controller)(),
     __metadata("design:paramtypes", [auth_service_1.AuthService,
         jwt_1.JwtService])

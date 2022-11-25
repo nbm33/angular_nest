@@ -9,6 +9,7 @@ import { Res } from '@nestjs/common';
 import { LoginDto } from './dto/login.dto';
 import { AuthInterceptor } from './auth.interceptor';
 
+@UseInterceptors(ClassSerializerInterceptor)
 @Controller()
 export class AuthController { 
 
@@ -31,7 +32,6 @@ export class AuthController {
 
     //@Body('email') email: string,
     //@Body('password') password: string,
-
     @Post('login')
     async login(
         @Body() body: LoginDto,
@@ -40,24 +40,30 @@ export class AuthController {
         
         const user = await this.authService.findOneBy(body.email);
 
-        if(!user){
-            throw new BadRequestException("Email does not exist");
+        try{
+
+            if(!user){
+                throw new BadRequestException("Email does not exist");
+            }
+
+            if(!await bcrypt.compare(body.password, user.password)){
+                throw new BadRequestException("Password does not match");
+            }
+
+            const jwt =  await this.jwtService.signAsync({id: user.id});
+
+            response.cookie('jwt', jwt, {httpOnly: true});
+
+        } catch (error){
+
+            throw error
+
         }
 
-        if(!await bcrypt.compare(body.password, user.password)){
-            throw new BadRequestException("Password does not match");
-        }
-
-        const jwt =  await this.jwtService.signAsync({id: user.id});
-
-        response.cookie('jwt', jwt, {httpOnly: true});
-
-        return {
-            user
-        }
+        return user;
     }
 
-    @UseInterceptors(ClassSerializerInterceptor, AuthInterceptor)
+    @UseInterceptors(AuthInterceptor)
     @Get('user')
     async user(@Req() request: Request){
         const cookie = request.cookies['jwt']; 
@@ -68,6 +74,19 @@ export class AuthController {
 
     }
 
+    @UseInterceptors(AuthInterceptor)
+    @Post('logout')
+    async logout(
+        @Res({passthrough: true}) response: Response
+    ){
+        response.clearCookie('jwt');
+
+        return {
+            message: 'logout successfully'
+        }
+
+
+    }
 
 
 

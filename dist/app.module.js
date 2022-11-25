@@ -12,6 +12,7 @@ const typeorm_1 = require("@nestjs/typeorm");
 const app_controller_1 = require("./app.controller");
 const app_service_1 = require("./app.service");
 const auth_module_1 = require("./auth/auth.module");
+const reset_module_1 = require("./reset/reset.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -28,6 +29,7 @@ AppModule = __decorate([
                 autoLoadEntities: true,
                 synchronize: true,
             }),
+            reset_module_1.ResetModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],

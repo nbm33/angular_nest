@@ -8,8 +8,9 @@ export declare class AuthController {
     private jwtService;
     constructor(authService: AuthService, jwtService: JwtService);
     register(body: RegisterDto): Promise<import("./models/user.interface").User>;
-    login(body: LoginDto, response: Response): Promise<{
-        user: import("./models/user.interface").User;
-    }>;
+    login(body: LoginDto, response: Response): Promise<import("./models/user.interface").User>;
     user(request: Request): Promise<import("./models/user.interface").User>;
+    logout(response: Response): Promise<{
+        message: string;
+    }>;
 }

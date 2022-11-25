@@ -18,8 +18,13 @@ let AuthInterceptor = class AuthInterceptor {
     }
     intercept(context, next) {
         const request = context.switchToHttp().getRequest();
-        const jwt = request.cookies['jwt'];
-        if (!this.jwtService.verify(jwt)) {
+        try {
+            const jwt = request.cookies['jwt'];
+            if (!this.jwtService.verify(jwt)) {
+                throw new common_1.UnauthorizedException();
+            }
+        }
+        catch (e) {
             throw new common_1.UnauthorizedException();
         }
         return next.handle();
