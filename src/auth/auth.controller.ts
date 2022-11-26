@@ -62,6 +62,7 @@ export class AuthController {
 
         return user;
     }
+    
 
     @UseInterceptors(AuthInterceptor)
     @Get('user')

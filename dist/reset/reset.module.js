@@ -10,10 +10,27 @@ exports.ResetModule = void 0;
 const common_1 = require("@nestjs/common");
 const reset_service_1 = require("./reset.service");
 const reset_controller_1 = require("./reset.controller");
+const typeorm_1 = require("@nestjs/typeorm");
+const reset_entity_1 = require("./reset.entity");
+const mailer_1 = require("@nestjs-modules/mailer");
+const auth_module_1 = require("../auth/auth.module");
 let ResetModule = class ResetModule {
 };
 ResetModule = __decorate([
     (0, common_1.Module)({
+        imports: [
+            typeorm_1.TypeOrmModule.forFeature([reset_entity_1.ResetEntity]),
+            mailer_1.MailerModule.forRoot({
+                transport: {
+                    host: 'localhost',
+                    port: 1025,
+                },
+                defaults: {
+                    from: 'no-replay@localhost.com'
+                }
+            }),
+            auth_module_1.AuthModule
+        ],
         providers: [reset_service_1.ResetService],
         controllers: [reset_controller_1.ResetController]
     })
