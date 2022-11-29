@@ -14,7 +14,8 @@ export class AuthService {
     }
 
     async findOneBy(condition): Promise<User>{
-        return await this.userRepository.findOne(condition);
+        const user = await this.userRepository.findOne(condition);
+        return user;
     }
 
     async update(id: number, data): Promise<any>{

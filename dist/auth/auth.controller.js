@@ -20,7 +20,6 @@ const bcrypt = require("bcrypt");
 const register_dto_1 = require("./dto/register.dto");
 const jwt_1 = require("@nestjs/jwt");
 const common_3 = require("@nestjs/common");
-const login_dto_1 = require("./dto/login.dto");
 const auth_interceptor_1 = require("./auth.interceptor");
 let AuthController = class AuthController {
     constructor(authService, jwtService) {
@@ -34,13 +33,13 @@ let AuthController = class AuthController {
         body.password = await bcrypt.hash(body.password, 12);
         return this.authService.create(body);
     }
-    async login(body, response) {
-        const user = await this.authService.findOneBy(body.email);
+    async login(email, password, response) {
+        const user = await this.authService.findOneBy({ email });
         try {
             if (!user) {
                 throw new common_1.BadRequestException("Email does not exist");
             }
-            if (!await bcrypt.compare(body.password, user.password)) {
+            if (!await bcrypt.compare(password, user.password)) {
                 throw new common_1.BadRequestException("Password does not match");
             }
             const jwt = await this.jwtService.signAsync({ id: user.id });
@@ -72,10 +71,11 @@ __decorate([
 ], AuthController.prototype, "register", null);
 __decorate([
     (0, common_1.Post)('login'),
-    __param(0, (0, common_1.Body)()),
-    __param(1, (0, common_3.Res)({ passthrough: true })),
+    __param(0, (0, common_1.Body)('email')),
+    __param(1, (0, common_1.Body)('password')),
+    __param(2, (0, common_3.Res)({ passthrough: true })),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [login_dto_1.LoginDto, Object]),
+    __metadata("design:paramtypes", [String, String, Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "login", null);
 __decorate([

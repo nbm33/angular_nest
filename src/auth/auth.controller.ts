@@ -30,15 +30,15 @@ export class AuthController {
         return this.authService.create(body);
     }
 
-    //@Body('email') email: string,
-    //@Body('password') password: string,
+    
     @Post('login')
     async login(
-        @Body() body: LoginDto,
+        @Body('email') email: string,
+        @Body('password') password: string,
         @Res({passthrough: true}) response: Response
     ) {
         
-        const user = await this.authService.findOneBy(body.email);
+        const user = await this.authService.findOneBy({email});
 
         try{
 
@@ -46,7 +46,7 @@ export class AuthController {
                 throw new BadRequestException("Email does not exist");
             }
 
-            if(!await bcrypt.compare(body.password, user.password)){
+            if(!await bcrypt.compare(password, user.password)){
                 throw new BadRequestException("Password does not match");
             }
 

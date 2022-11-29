@@ -19,6 +19,7 @@ export class ResetService {
     async findOne(condition): Promise<Reset> {
         return await this.resetRepository.findOne(condition);
     }
+    
 
 
 }

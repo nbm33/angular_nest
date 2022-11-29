@@ -25,7 +25,8 @@ let AuthService = class AuthService {
         return await this.userRepository.save(user);
     }
     async findOneBy(condition) {
-        return await this.userRepository.findOne(condition);
+        const user = await this.userRepository.findOne(condition);
+        return user;
     }
     async update(id, data) {
         return await this.userRepository.update(id, data);
