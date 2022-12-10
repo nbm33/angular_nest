@@ -4,6 +4,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { ResetModule } from './reset/reset.module';
+import { RoleModule } from './role/role.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import { ResetModule } from './reset/reset.module';
       synchronize: true,
     }),
     ResetModule,
+    RoleModule,
   ],
   controllers: [AppController],
   providers: [AppService],

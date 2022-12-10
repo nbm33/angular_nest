@@ -21,6 +21,24 @@ let AuthService = class AuthService {
     constructor(userRepository) {
         this.userRepository = userRepository;
     }
+    async all() {
+        return await this.userRepository.find();
+    }
+    async paginate(page = 1) {
+        const take = 5;
+        const [users, total] = await this.userRepository.findAndCount({
+            take,
+            skip: (page - 1) * take
+        });
+        return {
+            data: users,
+            meta: {
+                total,
+                page,
+                last_page: Math.ceil(total / take)
+            }
+        };
+    }
     async create(user) {
         return await this.userRepository.save(user);
     }
@@ -30,6 +48,17 @@ let AuthService = class AuthService {
     }
     async update(id, data) {
         return await this.userRepository.update(id, data);
+    }
+    async updateUser(id, data) {
+        const userUpdate = await this.userRepository.findOne(id);
+        userUpdate.first_name = data.first_name;
+        userUpdate.last_name = data.last_name;
+        userUpdate.email = data.email;
+        return this.userRepository.save(userUpdate);
+    }
+    async deleteUser(id) {
+        const userDelete = await this.userRepository.findOne(id);
+        return this.userRepository.delete(userDelete);
     }
 };
 AuthService = __decorate([

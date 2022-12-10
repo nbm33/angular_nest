@@ -1,4 +1,4 @@
-import { BadRequestException, Body, ClassSerializerInterceptor, Post, Req, UseInterceptors } from '@nestjs/common';
+import { BadRequestException, Body, ClassSerializerInterceptor, Delete, Param, Post, Query, Req, UseInterceptors } from '@nestjs/common';
 import { Controller, Get } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import * as bcrypt from 'bcrypt';
@@ -6,8 +6,11 @@ import { RegisterDto } from './dto/register.dto';
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response } from 'express';
 import { Res } from '@nestjs/common';
-import { LoginDto } from './dto/login.dto';
 import { AuthInterceptor } from './auth.interceptor';
+import { User } from './models/user.interface';
+import { Put } from '@nestjs/common';
+import { UserUpdateDto } from './dto/user-update.dto';
+
 
 @UseInterceptors(ClassSerializerInterceptor)
 @Controller()
@@ -89,6 +92,27 @@ export class AuthController {
 
     }
 
+    @Get('users')
+    async all(@Query('page') page: number = 1): Promise<User[]>{
+        return await this.authService.paginate(page);
+    }
 
+    @Put(':id')
+    async userUpdate(
+        @Param('id') id: number,
+        @Body() body: UserUpdateDto
+        ) {
+       
+        this.authService.updateUser(id, body);
+
+        return this.authService.findOneBy({id});
+    }
+
+    @Delete(':id')
+    async Delete(
+        @Param('id') id: number
+    ){
+        return this.authService.deleteUser(id);
+    }
 
 }

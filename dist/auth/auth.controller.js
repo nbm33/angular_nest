@@ -21,6 +21,8 @@ const register_dto_1 = require("./dto/register.dto");
 const jwt_1 = require("@nestjs/jwt");
 const common_3 = require("@nestjs/common");
 const auth_interceptor_1 = require("./auth.interceptor");
+const common_4 = require("@nestjs/common");
+const user_update_dto_1 = require("./dto/user-update.dto");
 let AuthController = class AuthController {
     constructor(authService, jwtService) {
         this.authService = authService;
@@ -61,6 +63,16 @@ let AuthController = class AuthController {
             message: 'logout successfully'
         };
     }
+    async all(page = 1) {
+        return await this.authService.paginate(page);
+    }
+    async userUpdate(id, body) {
+        this.authService.updateUser(id, body);
+        return this.authService.findOneBy({ id });
+    }
+    async Delete(id) {
+        return this.authService.deleteUser(id);
+    }
 };
 __decorate([
     (0, common_1.Post)('register'),
@@ -94,6 +106,28 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "logout", null);
+__decorate([
+    (0, common_2.Get)('users'),
+    __param(0, (0, common_1.Query)('page')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "all", null);
+__decorate([
+    (0, common_4.Put)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __param(1, (0, common_1.Body)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number, user_update_dto_1.UserUpdateDto]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "userUpdate", null);
+__decorate([
+    (0, common_1.Delete)(':id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "Delete", null);
 AuthController = __decorate([
     (0, common_1.UseInterceptors)(common_1.ClassSerializerInterceptor),
     (0, common_2.Controller)(),
