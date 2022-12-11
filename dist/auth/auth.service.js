@@ -39,8 +39,8 @@ let AuthService = class AuthService {
             }
         };
     }
-    async create(user) {
-        return await this.userRepository.save(user);
+    async create(data) {
+        return await this.userRepository.save(data);
     }
     async findOneBy(condition) {
         const user = await this.userRepository.findOne(condition);
@@ -54,6 +54,7 @@ let AuthService = class AuthService {
         userUpdate.first_name = data.first_name;
         userUpdate.last_name = data.last_name;
         userUpdate.email = data.email;
+        userUpdate.role = data.role;
         return this.userRepository.save(userUpdate);
     }
     async deleteUser(id) {

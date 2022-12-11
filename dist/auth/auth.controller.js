@@ -33,7 +33,14 @@ let AuthController = class AuthController {
             throw new common_1.BadRequestException('Password do not match');
         }
         body.password = await bcrypt.hash(body.password, 12);
-        return this.authService.create(body);
+        return this.authService.create({
+            first_name: body.first_name,
+            last_name: body.last_name,
+            email: body.email,
+            password: body.password,
+            password_confirm: body.password_confirm,
+            role: { id: body.role_id }
+        });
     }
     async login(email, password, response) {
         const user = await this.authService.findOneBy({ email });
@@ -67,7 +74,12 @@ let AuthController = class AuthController {
         return await this.authService.paginate(page);
     }
     async userUpdate(id, body) {
-        this.authService.updateUser(id, body);
+        this.authService.updateUser(id, {
+            first_name: body.first_name,
+            last_name: body.last_name,
+            email: body.email,
+            role: { id: body.role_id }
+        });
         return this.authService.findOneBy({ id });
     }
     async Delete(id) {

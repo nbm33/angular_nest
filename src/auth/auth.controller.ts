@@ -28,9 +28,16 @@ export class AuthController {
             throw new BadRequestException('Password do not match')
         }
 
-        body.password = await bcrypt.hash(body.password, 12)
+        body.password = await bcrypt.hash(body.password, 12); 
 
-        return this.authService.create(body);
+        return this.authService.create({
+            first_name: body.first_name,
+            last_name: body.last_name,
+            email: body.email,
+            password: body.password,
+            password_confirm: body.password_confirm,
+            role: {id: body.role_id}
+        });
     }
 
     
@@ -102,8 +109,13 @@ export class AuthController {
         @Param('id') id: number,
         @Body() body: UserUpdateDto
         ) {
-       
-        this.authService.updateUser(id, body);
+
+        this.authService.updateUser(id, {
+            first_name: body.first_name,
+            last_name: body.last_name,
+            email: body.email,
+            role: {id: body.role_id}
+        });
 
         return this.authService.findOneBy({id});
     }

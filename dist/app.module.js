@@ -14,6 +14,7 @@ const app_service_1 = require("./app.service");
 const auth_module_1 = require("./auth/auth.module");
 const reset_module_1 = require("./reset/reset.module");
 const role_module_1 = require("./role/role.module");
+const permission_module_1 = require("./permission/permission.module");
 let AppModule = class AppModule {
 };
 AppModule = __decorate([
@@ -32,6 +33,7 @@ AppModule = __decorate([
             }),
             reset_module_1.ResetModule,
             role_module_1.RoleModule,
+            permission_module_1.PermissionModule,
         ],
         controllers: [app_controller_1.AppController],
         providers: [app_service_1.AppService],
