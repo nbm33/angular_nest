@@ -25,12 +25,16 @@ let RoleController = class RoleController {
     async get(id) {
         return this.roleService.findOneBy({ id });
     }
-    async create(name) {
-        return this.roleService.create({ name });
+    async create(name, ids) {
+        return this.roleService.create({
+            name,
+            permissions: ids.map(id => ({ id }))
+        });
     }
-    async update(id, name) {
+    async update(id, name, ids) {
         await this.roleService.update(id, { name });
-        return this.roleService.findOneBy({ id });
+        const role = await this.roleService.findOneBy({ id });
+        return this.roleService.create(Object.assign(Object.assign({}, role), { permissions: ids.map(id => ({ id })) }));
     }
     async delete(id) {
         return this.roleService.delete(id);
@@ -52,16 +56,18 @@ __decorate([
 __decorate([
     (0, common_1.Post)(),
     __param(0, (0, common_1.Body)('name')),
+    __param(1, (0, common_1.Body)('permissions')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [String]),
+    __metadata("design:paramtypes", [String, Array]),
     __metadata("design:returntype", Promise)
 ], RoleController.prototype, "create", null);
 __decorate([
     (0, common_1.Put)(':id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)('name')),
+    __param(2, (0, common_1.Body)('permissions')),
     __metadata("design:type", Function),
-    __metadata("design:paramtypes", [Number, String]),
+    __metadata("design:paramtypes", [Number, String, Array]),
     __metadata("design:returntype", Promise)
 ], RoleController.prototype, "update", null);
 __decorate([

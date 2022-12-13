@@ -15,12 +15,13 @@ export class AuthService {
         return await this.userRepository.find();
     }
 
-    async paginate(page = 1): Promise<any>{
+    async paginate(page = 1, relations: any[]=[]): Promise<any>{
         const take = 5; //paginas por hoja
 
         const [users, total] = await this.userRepository.findAndCount({
             take, 
-            skip: (page -1) * take
+            skip: (page -1) * take,
+            relations
         });
 
         return {
@@ -39,6 +40,11 @@ export class AuthService {
 
     async findOneBy(condition): Promise<User>{
         const user = await this.userRepository.findOne(condition);
+        return user;
+    }
+
+    async findOne(condition, relations: any[]=[]): Promise<any>{
+        const user = await this.userRepository.findOne(condition, {relations});
         return user;
     }
 

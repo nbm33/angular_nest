@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { ResetModule } from './reset/reset.module';
 import { RoleModule } from './role/role.module';
 import { PermissionModule } from './permission/permission.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { PermissionModule } from './permission/permission.module';
     ResetModule,
     RoleModule,
     PermissionModule,
+    CommonModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -25,7 +25,7 @@ let RoleService = class RoleService {
         return this.roleRepository.find();
     }
     async findOneBy(condition) {
-        return await this.roleRepository.findOne(condition);
+        return await this.roleRepository.findOne(condition, { relations: ['permissions'] });
     }
     async create(data) {
         return await this.roleRepository.save(data);

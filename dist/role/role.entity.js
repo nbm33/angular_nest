@@ -10,6 +10,7 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.Role = void 0;
+const permission_entity_1 = require("../permission/permission.entity");
 const typeorm_1 = require("typeorm");
 let Role = class Role {
 };
@@ -21,6 +22,15 @@ __decorate([
     (0, typeorm_1.Column)(),
     __metadata("design:type", String)
 ], Role.prototype, "name", void 0);
+__decorate([
+    (0, typeorm_1.ManyToMany)(() => permission_entity_1.Permission, { cascade: true }),
+    (0, typeorm_1.JoinTable)({
+        name: 'role_permissions',
+        joinColumn: { name: 'role_id', referencedColumnName: 'id' },
+        inverseJoinColumn: { name: 'permissions_id', referencedColumnName: 'id' }
+    }),
+    __metadata("design:type", Array)
+], Role.prototype, "permissions", void 0);
 Role = __decorate([
     (0, typeorm_1.Entity)('roles')
 ], Role);

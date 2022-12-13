@@ -13,7 +13,7 @@ export class RoleService {
     }
 
     async findOneBy(condition): Promise<Role>{
-        return await this.roleRepository.findOne(condition);
+        return await this.roleRepository.findOne(condition, {relations: ['permissions']});
     }
 
     async create(data): Promise<Role>{

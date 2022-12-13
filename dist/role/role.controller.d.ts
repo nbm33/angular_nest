@@ -5,7 +5,7 @@ export declare class RoleController {
     constructor(roleService: RoleService);
     all(): Promise<Role[]>;
     get(id: number): Promise<Role>;
-    create(name: string): Promise<Role>;
-    update(id: number, name: string): Promise<Role>;
+    create(name: string, ids: number[]): Promise<Role>;
+    update(id: number, name: string, ids: number[]): Promise<Role>;
     delete(id: number): Promise<any>;
 }

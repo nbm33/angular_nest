@@ -6,9 +6,10 @@ export declare class AuthService {
     private readonly userRepository;
     constructor(userRepository: Repository<UserEntity>);
     all(): Promise<User[]>;
-    paginate(page?: number): Promise<any>;
+    paginate(page?: number, relations?: any[]): Promise<any>;
     create(data: any): Promise<User>;
     findOneBy(condition: any): Promise<User>;
+    findOne(condition: any, relations?: any[]): Promise<any>;
     update(id: number, data: any): Promise<any>;
     updateUser(id: number, data: any): Promise<UserUpdateDto>;
     deleteUser(id: number): Promise<any>;

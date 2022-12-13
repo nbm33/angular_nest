@@ -71,7 +71,10 @@ let AuthController = class AuthController {
         };
     }
     async all(page = 1) {
-        return await this.authService.paginate(page);
+        return await this.authService.paginate(page, ['role']);
+    }
+    async get(id) {
+        return await this.authService.findOne(id, ['role']);
     }
     async userUpdate(id, body) {
         this.authService.updateUser(id, {
@@ -126,7 +129,14 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "all", null);
 __decorate([
-    (0, common_4.Put)(':id'),
+    (0, common_2.Get)('user/:id'),
+    __param(0, (0, common_1.Param)('id')),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Number]),
+    __metadata("design:returntype", Promise)
+], AuthController.prototype, "get", null);
+__decorate([
+    (0, common_4.Put)('user/:id'),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.Body)()),
     __metadata("design:type", Function),
@@ -134,7 +144,7 @@ __decorate([
     __metadata("design:returntype", Promise)
 ], AuthController.prototype, "userUpdate", null);
 __decorate([
-    (0, common_1.Delete)(':id'),
+    (0, common_1.Delete)('user/:id'),
     __param(0, (0, common_1.Param)('id')),
     __metadata("design:type", Function),
     __metadata("design:paramtypes", [Number]),

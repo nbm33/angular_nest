@@ -7,7 +7,6 @@ import { JwtService } from '@nestjs/jwt';
 import { Request, Response } from 'express';
 import { Res } from '@nestjs/common';
 import { AuthInterceptor } from './auth.interceptor';
-import { User } from './models/user.interface';
 import { Put } from '@nestjs/common';
 import { UserUpdateDto } from './dto/user-update.dto';
 
@@ -100,11 +99,16 @@ export class AuthController {
     }
 
     @Get('users')
-    async all(@Query('page') page: number = 1): Promise<User[]>{
-        return await this.authService.paginate(page);
+    async all(@Query('page') page: number = 1){
+        return await this.authService.paginate(page, ['role']);
     }
 
-    @Put(':id')
+    @Get('user/:id')
+    async get(@Param('id') id: number){
+        return await this.authService.findOne(id, ['role']);
+    }
+
+    @Put('user/:id')
     async userUpdate(
         @Param('id') id: number,
         @Body() body: UserUpdateDto
@@ -120,7 +124,7 @@ export class AuthController {
         return this.authService.findOneBy({id});
     }
 
-    @Delete(':id')
+    @Delete('user/:id')
     async Delete(
         @Param('id') id: number
     ){

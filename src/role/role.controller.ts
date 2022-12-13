@@ -19,19 +19,30 @@ export class RoleController {
 
     @Post()
     async create(
-        @Body('name') name: string
+        @Body('name') name: string,
+        @Body('permissions') ids: number[]
         ){
-        return this.roleService.create({name});
+        return this.roleService.create({
+            name,
+            permissions: ids.map(id => ({id}))
+        });
     }
 
     @Put(':id')
     async update(
         @Param('id') id: number,
-        @Body('name') name: string
+        @Body('name') name: string,
+        @Body('permissions') ids: number[]
         ){
        
         await this.roleService.update(id, {name});
-        return this.roleService.findOneBy({id});
+
+        const role = await this.roleService.findOneBy({id});
+
+        return this.roleService.create({
+            ...role,
+            permissions: ids.map(id => ({id}))
+        });
     }
 
     @Delete(':id')

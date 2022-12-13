@@ -24,11 +24,12 @@ let AuthService = class AuthService {
     async all() {
         return await this.userRepository.find();
     }
-    async paginate(page = 1) {
+    async paginate(page = 1, relations = []) {
         const take = 5;
         const [users, total] = await this.userRepository.findAndCount({
             take,
-            skip: (page - 1) * take
+            skip: (page - 1) * take,
+            relations
         });
         return {
             data: users,
@@ -44,6 +45,10 @@ let AuthService = class AuthService {
     }
     async findOneBy(condition) {
         const user = await this.userRepository.findOne(condition);
+        return user;
+    }
+    async findOne(condition, relations = []) {
+        const user = await this.userRepository.findOne(condition, { relations });
         return user;
     }
     async update(id, data) {
