@@ -12,6 +12,7 @@ const product_controller_1 = require("./product.controller");
 const product_service_1 = require("./product.service");
 const typeorm_1 = require("@nestjs/typeorm");
 const product_emtity_1 = require("./models/product.emtity");
+const upload_controller_1 = require("./upload.controller");
 let ProductModule = class ProductModule {
 };
 ProductModule = __decorate([
@@ -19,7 +20,7 @@ ProductModule = __decorate([
         imports: [
             typeorm_1.TypeOrmModule.forFeature([product_emtity_1.Product])
         ],
-        controllers: [product_controller_1.ProductController],
+        controllers: [product_controller_1.ProductController, upload_controller_1.UploadController],
         providers: [product_service_1.ProductService]
     })
 ], ProductModule);
