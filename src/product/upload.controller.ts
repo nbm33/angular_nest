@@ -1,7 +1,9 @@
-import { Controller, Post, UploadedFile, UseInterceptors } from '@nestjs/common';
+import { Controller, Get, Param, Post, Res, UploadedFile, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
-import {extname} from 'path';
+import { extname } from 'path';
+import { Response } from 'express';
+
 
 @Controller()
 export class UploadController {
@@ -18,8 +20,20 @@ export class UploadController {
             }
         })
     }))
+
     uploadFile(@UploadedFile() file) {
-        console.log(file);
+        return {
+            url: `http://localhost:8000/api/${file.path}`
+        }
+    }
+
+    @Get('uploads/:path')
+    async getImage(
+        @Param('path') path,
+        @Res() res: Response
+        ){
+        
+        res.sendFile(path, {root: 'uploads'})
     }
 
 

@@ -19,7 +19,12 @@ const multer_1 = require("multer");
 const path_1 = require("path");
 let UploadController = class UploadController {
     uploadFile(file) {
-        console.log(file);
+        return {
+            url: `http://localhost:8000/api/${file.path}`
+        };
+    }
+    async getImage(path, res) {
+        res.sendFile(path, { root: 'uploads' });
     }
 };
 __decorate([
@@ -38,6 +43,14 @@ __decorate([
     __metadata("design:paramtypes", [Object]),
     __metadata("design:returntype", void 0)
 ], UploadController.prototype, "uploadFile", null);
+__decorate([
+    (0, common_1.Get)('uploads/:path'),
+    __param(0, (0, common_1.Param)('path')),
+    __param(1, (0, common_1.Res)()),
+    __metadata("design:type", Function),
+    __metadata("design:paramtypes", [Object, Object]),
+    __metadata("design:returntype", Promise)
+], UploadController.prototype, "getImage", null);
 UploadController = __decorate([
     (0, common_1.Controller)()
 ], UploadController);
